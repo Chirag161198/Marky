@@ -1,0 +1,19 @@
+{
+  "name": "marky_bot",
+  "version": "1.0.0",
+  "description": "Marky BOT",
+  "main": "Marky.js",
+  "dependencies": {
+    "discord.js": "^11.4.2",
+    "dotenv": "^6.2.0",
+    "nodemon": "^1.18.9",
+    "newsapi": "^2.4.0",
+    "node-fetch": "^2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node Marky.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
