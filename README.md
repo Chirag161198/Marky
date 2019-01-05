@@ -31,6 +31,7 @@ Manage server, Manage channels, Manage roles, Kick and Ban members, Create insta
   - !skip - Skips the current song
   - !playlist - Shows the playlist
   - !clear - Clears the playlist
+- Cannot be used in DM channels now
 - Creates the required channels (`welcome-members`,`music`) if not available when added to server
 - Creates the required roles (`ADMIN`,`MOD`) when added to server and sends the details to `general` channel (if not available, then picks up first text channel)
 
