@@ -4,15 +4,32 @@ const client = new Discord.Client()
 var fetch = require("node-fetch")
 const NewsAPI = require('newsapi')
 const newsapi = new NewsAPI(process.env.NEWS_API_KEY)
+const musicFunctions = require('./musicCommands.js')
+const joinchannelcommand = musicFunctions.join
+const playcommand = musicFunctions.play
+const leavechannelcommand = musicFunctions.leave
+const nowplayingcommand = musicFunctions.np
+const queuecommand = musicFunctions.q
+const skipcommand = musicFunctions.skip
+const playlistcommand = musicFunctions.playlist
+const clearcommand = musicFunctions.clear
+
+global.servers = {};
+let conn = null ;
+let voiceChannel = null;
+
+function listServers(){
+    console.log(`Marky is connected to following servers`)
+    client.guilds.forEach((guild)=> {
+        console.log(`Server: ${guild.name} Owner: ${guild.owner} Members: ${guild.memberCount}`)
+    })
+}
 
 client.on('ready', () => {
     console.log("Connected as " + client.user.tag)
+
     //Change the status of the bot
-    client.user.setActivity("You!", {type: "WATCHING"})
-    //Print servers the bot is connected to
-    client.guilds.forEach((guild)=> {
-        console.log(guild.name)
-    })    
+    client.user.setActivity("!help", {type: "LISTENING"})
 })
 
 client.on('guildMemberAdd', member => {
@@ -25,6 +42,65 @@ client.on('guildMemberAdd', member => {
 
 client.on('guildCreate', guild => {
     console.log(`Marky added to ${guild.name} on ${new Date()} owned by ${guild.owner.displayName}`)
+    
+    // Finding general channel, if general not availaible then take first channel available
+    let general = null
+    guild.channels.forEach((channel)=>{
+        if(channel.name == 'general' && channel.type == 'text'){
+            general = channel
+        }        
+    })
+    if(general == null){
+        for (var i=0 ; i<guild.channels.length ; i++){
+            if(guild.channels[i].type == 'text'){
+                general = guild.channels[i]
+                break
+            }
+        }
+    }
+
+    // Making required channels
+    const reqChannels = ['welcome-members','music']
+    for(i=0;i<reqChannels.length;i++){
+        if(guild.channels.find(channel => channel.name == reqChannels[i]) == undefined){
+            guild.createChannel(reqChannels[i],'text').then((channel)=>{
+                channel.send(` Created \`${channel.name}\` channel to use it for specific commands of Marky\nType \`!help\` for more`)
+            })
+        }
+    }
+
+    // Making required roles
+    const reqRoles = [{
+        name: 'ADMIN',
+        color: 0xff0000,
+        permissions: 1342178359,
+        mentionable: false
+    },{
+        name: 'MOD',
+        color: 0xff6600,
+        permissions: 1073742869,
+        mentionable: true
+    }]
+    for(i=0;i<reqRoles.length;i++){
+        if(guild.roles.find(role => role.name == reqRoles[i].name) == undefined){
+            guild.createRole(reqRoles[i],'To use special commands of Marky like !setActivity, kick & ban commands, etc (Make sure the roles have appropriate permission to perform actions').then((role)=>{
+                general.send(`Created \`${role.name}\` role for specific commands of Marky\nType \`!type\` for more`)
+            })
+        }
+    }
+
+    // Making Owner the ADMIN
+    guild.roles.forEach((role)=>{
+        if(role.name == 'ADMIN'){
+            guild.owner.setRoles([role.id],'Assigned by Marky').then((owner)=>{
+                general.send(`Server owner: ${owner.displayName} is now ADMIN`)
+            }).catch((error)=>{
+                if(error.message == 'Missing Permissions'){
+                    general.send("The member who invited me do not have the required permission.\nType `!help` for more help")
+                }
+            })
+        }
+    })
 })
 
 client.on('guildDelete', guild => {
@@ -36,6 +112,15 @@ client.on("message", (receivedMessage)=>{
     // Checking if the message was sent by bot: if yes, return an empty thing, otherwise follow the commands below
     if(receivedMessage.author == client.user){
         return 
+    }
+    // Checking if the user was bot
+    if(receivedMessage.author.bot){
+        return
+    }
+    // Checking if the channel was DM
+    if(receivedMessage.channel.type == 'dm'){
+        receivedMessage.reply("Commands can only be used in a server")
+        return
     }
     // Checking the first letter if it is a command
     else if (receivedMessage.content.startsWith("!")){
@@ -49,7 +134,7 @@ function processComand(receivedMessage){
     let splitcommand = fullcommand.split(" ")
     let primarycommand = splitcommand[0]
     let arguements = splitcommand.slice(1)
-
+    
     if(primarycommand == "help"){
         helpcommand(arguements,receivedMessage)
     }
@@ -65,9 +150,6 @@ function processComand(receivedMessage){
     else if(primarycommand == "weather"){
         weathercommand(arguements, receivedMessage)
     }
-    else if(primarycommand == "activityMarky"){
-        activitycommand(arguements, receivedMessage)
-    }
     else if(primarycommand == "inviteLink"){
         let data = {
             title: "Click here to add Marky to your server",
@@ -77,6 +159,37 @@ function processComand(receivedMessage){
         }
         receivedMessage.channel.send(new Discord.RichEmbed(data))
     }
+    else if(receivedMessage.channel.name == 'music'){
+        if(primarycommand == "join"){
+            joinchannelcommand(arguements, receivedMessage)
+        }
+        else if(primarycommand == "leave"){
+            leavechannelcommand(arguements, receivedMessage)
+        }
+        else if(primarycommand == "play"){
+            if(arguements.length == 0){
+                receivedMessage.channel.send("Try using `!play [song]`")
+            }
+            else{
+                playcommand(arguements, receivedMessage)
+            }
+        }
+        else if(primarycommand == "np" || primarycommand == "nowplaying"){
+            nowplayingcommand(arguements, receivedMessage)
+        }
+        else if(primarycommand == "q" || primarycommand == "queue"){
+            queuecommand(arguements, receivedMessage)
+        }
+        else if(primarycommand == "skip"){
+            skipcommand(arguements, receivedMessage)
+        }
+        else if(primarycommand == "playlist"){
+            playlistcommand(arguements, receivedMessage)
+        }
+        else if(primarycommand == "clear"){
+            clearcommand(arguements, receivedMessage)
+        }
+    }
     else{
         receivedMessage.react("😕")
         receivedMessage.channel.send("Write `!help` for more 🔍")
@@ -85,13 +198,19 @@ function processComand(receivedMessage){
 
 // !help command
 function helpcommand(arguements, receivedMessage){
-    let textCommands = "`!8ball [question]` - Play 8ball game with Marky\n`!news` - Get news headlines\n`!gif [search]` - search for gif\n`!weather [city-name]` - get weather update of a city\n`!activityMarky [playing|streaming|listening|watching] [text]` - change Marky's Activity\n`!inviteLink` - Get Marky's Invite Link";
-    let features = "Add a channel `welcome-members` to let Marky welcome new members\nOnly members with `ADMIN` role can change Marky's activity";
+    let textCommands = "`!8ball [question]` - Play 8ball game with me\n`!news` - Get news headlines\n`!gif [search]` - search for gif\n`!weather [city-name]` - get weather update of a city\n`!inviteLink` - Get Marky's Invite Link";
+
+    let musicCommands = "`!join` - Joins a voice channel\n`!leave` - leaves the voice channel\n`!play [song]` - Plays the song\n`!np` - Shows the song currently playing\n`!q [song]` - Adds the song to queue\n`!skip` - Skips the current song\n`!playlist` - Shows the playlist\n`!clear` - Clears the playlist"
+
+    let features = "Welcomes new member in `welcome-members` channel";
     let str = {
-        title: "Getting Started 🤪",
+        title: "Getting Started ‼",
         fields: [{
             name: "Text Commands",
             value: textCommands
+        },{
+            name: "Music Commands (Only works in `music` channel)",
+            value: musicCommands
         },{
             name: "Other Features",
             value: features
@@ -99,21 +218,6 @@ function helpcommand(arguements, receivedMessage){
         color: 0xff6600
     }
     receivedMessage.channel.send(new Discord.RichEmbed(str))
-}
-
-// !activity command
-function activitycommand(arguements, receivedMessage){
-    let admin = receivedMessage.member.roles.find((member)=>member.name == 'ADMIN')
-        if(admin==null){
-            receivedMessage.react("😝")
-            receivedMessage.channel.send("You are not authorized to change my activity. 😎\nTry `!help` for more information")
-        }
-        else if(arguements.length>=2&&(arguements[0].toLowerCase()=="playing"||arguements[0].toLowerCase()=="streaming"||arguements[0].toLowerCase()=="listening"||arguements[0].toLowerCase()=="watching")){
-            client.user.setActivity(arguements.slice(1).join(" "), {type: arguements[0].toUpperCase()})
-        }
-        else{
-            receivedMessage.channel.send("What should I do?\nTry `!activityMarky watching you`")
-        }
 }
 
 // !8ball command

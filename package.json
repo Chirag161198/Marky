@@ -6,14 +6,25 @@
   "dependencies": {
     "discord.js": "^11.4.2",
     "dotenv": "^6.2.0",
-    "nodemon": "^1.18.9",
+    "ffmpeg-binaries": "^4.0.0",
     "newsapi": "^2.4.0",
-    "node-fetch": "^2.3.0"
+    "node-fetch": "^2.3.0",
+    "nodemon": "^1.18.9",
+    "opusscript": "0.0.6",
+    "ytdl-core": "^0.28.3"
   },
   "devDependencies": {},
   "scripts": {
     "start": "node Marky.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chirag161198/Marky.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Chirag161198/Marky/issues"
+  },
+  "homepage": "https://github.com/Chirag161198/Marky#readme"
 }
