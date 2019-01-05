@@ -140,7 +140,7 @@ function playcommand(arguements, receivedMessage){
         } // Add the song to queue (to be completed)
         getYoutubeLink(arguements.join("+")).then((data)=>{
             server.queue.push(data);
-            receivedMessage.channel.send("Playing 🎧")
+            receivedMessage.channel.send("Playing 🎧\nSong quality might be low due to server issues")
             displaySongDetails(receivedMessage, data) 
             Play(conn, receivedMessage, server, data);
         })
