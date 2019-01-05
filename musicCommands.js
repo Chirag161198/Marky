@@ -59,6 +59,7 @@ function skipcommand(arguements, receivedMessage){
 
 // !np command
 function nowplayingcommand(arguements, receivedMessage){
+    var server = servers[receivedMessage.guild.id];
     if(servers[receivedMessage.guild.id]){
         if(server.np){
             var server = servers[receivedMessage.guild.id];
