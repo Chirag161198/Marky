@@ -2,11 +2,6 @@ const YTDL = require('ytdl-core')
 const fetch = require("node-fetch")
 const Discord = require('discord.js')
 
-/*
-implement that music commands will only be sent through 'music' channel
-check for thumbnail in displaySongDetails
-*/
-
 // !join command
 function joinchannelcommand(arguements, receivedMessage){
     if(!receivedMessage.member.voiceChannel){
@@ -207,31 +202,3 @@ module.exports = {
     playlist: playlistcommand,
     clear: clearcommand
 }
-
-/*!play command
-function playcommand(arguements, receivedMessage){
-    if(!servers[receivedMessage.guild.id]){
-        servers[receivedMessage.guild.id] = {queue : []}
-    }
-    var server = servers[receivedMessage.guild.id];
-    if(typeof server.dispatcher !== 'undefined'){
-        console.log("Song already playing, will add to queue")
-        return
-    } // Add the song to queue
-    getLastFMLink(arguements.join("+")).then((data)=>{
-        let SongData = data.results.trackmatches.track[0]
-        let SongLink = SongData.url
-        let SongThumbnail = SongData.image[0]["#text"]
-        console.log(SongLink)
-        console.log(SongThumbnail)
-        server.queue.push(SongLink); 
-        Play(conn, receivedMessage, server);
-    })
-}
-function getLastFMLink(query){
-    return fetch('http://ws.audioscrobbler.com/2.0/?method=track.search&format=json&limit=1&api_key='+process.env.LASTFM_API+'&track='+ query)
-    .then((response)=>response.json())
-    .then((response)=>{
-        return response
-    })
-}*/
