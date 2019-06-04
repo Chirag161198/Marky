@@ -18,18 +18,15 @@ global.servers = {};
 let conn = null ;
 let voiceChannel = null;
 
-function listServers(){
-    console.log(`Marky is connected to following servers`)
-    client.guilds.forEach((guild)=> {
-        console.log(`Server: ${guild.name} Owner: ${guild.owner} Members: ${guild.memberCount}`)
-    })
-}
-
 client.on('ready', () => {
     console.log("Connected as " + client.user.tag)
 
     //Change the status of the bot
     client.user.setActivity("!help", {type: "LISTENING"})
+
+    client.guilds.forEach((guild)=> {
+        console.log(`Server: ${guild.name} Owner: ${guild.owner} Members: ${guild.memberCount}`)
+    })
 })
 
 client.on('guildMemberAdd', member => {
@@ -238,29 +235,35 @@ function eightballcommand(arguements, receivedMessage){
 
 // !news command
 function newscommand(arguements, receivedMessage){
-    receivedMessage.react("🗞")
-    newsapi.v2.topHeadlines({
-        language: 'en'
-    }).then(response => {
-        let data = {
-            author: {
-                name: "Headlines powered by NewsAPI.org",
-                url: "https://newsapi.org/" 
-            },
-            fields : [],
-            color: 0x0000b3
-        }; 
-        for(let i=0;i<5;i++){
-            let field = {
-                name: response.articles[i].title,
-                value: response.articles[i].url,
-                inline: false
+    if(arguements.length == 0){
+        arguements = ['India']
+    }
+    url = 'https://news-api-chirag.herokuapp.com/news/' + arguements.join('%20')
+    fetch(url)
+        .then((res)=>{
+            return res.json()
+        })
+        .then((response)=>{
+            let data = {
+                author: {
+                    name: "Headlines powered by News API",
+                    url: "https://news-api-chirag.herokuapp.com" 
+                },
+                fields : [],
+                color: 0x0000b3
+            }; 
+            for(let i=0;i<response.length;i++){
+                res = response[i];
+                let field = {
+                    name: res.category + ' : ' + res.title,
+                    value: res.link,
+                    inline: false
+                }
+                data.fields.push(field)
             }
-            data.fields.push(field)
-        }
-        receivedMessage.channel.send(new Discord.RichEmbed(data))
-    })
-    
+            receivedMessage.channel.send(new Discord.RichEmbed(data))
+        })    
+    receivedMessage.react("🗞")
 }
 
 // !gif command
