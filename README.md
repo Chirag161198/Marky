@@ -40,3 +40,7 @@ Manage server, Manage roles, Manage channels, Kick members, Ban members, Create 
 - MOD PERMISSIONS:
 Manage channels, Ban members, Create instant invite, Manage emojis, View channels
 - +version 1.0 commands and features
+
+### news-api
+Default search is 'India'  
+[News API](https://news-api-chirag.herokuapp.com)
