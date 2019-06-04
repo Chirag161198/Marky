@@ -14,7 +14,7 @@ Manage server, Manage channels, Manage roles, Kick and Ban members, Create insta
 ### version 1.0 commands and features:
 * !help - Get command list
 * !8ball [question] - Play 8ball game with marky |[API reference](https://8ball.delegator.com/)
-* !news - Get news headlines | [API reference](https://newsapi.org/)
+* !news - Get news headlines | Default search : 'India' |  [News API](https://news-api-chirag.herokuapp.com)
 * !gif [search] - Search for gif | [API reference](https://tenor.com/gifapi/documentation#quickstart)
 * !weather [city-name] - Get weather update of a city [API reference](https://openweathermap.org/api)
 * !inviteLink - Get Marky's Invite Link
@@ -40,7 +40,3 @@ Manage server, Manage roles, Manage channels, Kick members, Ban members, Create 
 - MOD PERMISSIONS:
 Manage channels, Ban members, Create instant invite, Manage emojis, View channels
 - +version 1.0 commands and features
-
-### news-api
-Default search is 'India'  
-[News API](https://news-api-chirag.herokuapp.com)

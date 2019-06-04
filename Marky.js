@@ -195,7 +195,7 @@ function processComand(receivedMessage){
 
 // !help command
 function helpcommand(arguements, receivedMessage){
-    let textCommands = "`!8ball [question]` - Play 8ball game with me\n`!news` - Get news headlines\n`!gif [search]` - search for gif\n`!weather [city-name]` - get weather update of a city\n`!inviteLink` - Get Marky's Invite Link";
+    let textCommands = "`!8ball [question]` - Play 8ball game with me\n`!news [query]` - Get news headlines. Default query is \'India\'\n`!gif [search]` - search for gif\n`!weather [city-name]` - get weather update of a city\n`!inviteLink` - Get Marky's Invite Link";
 
     let musicCommands = "`!join` - Joins a voice channel\n`!leave` - leaves the voice channel\n`!play [song]` - Plays the song\n`!np` - Shows the song currently playing\n`!q [song]` - Adds the song to queue\n`!skip` - Skips the current song\n`!playlist` - Shows the playlist\n`!clear` - Clears the playlist"
 
